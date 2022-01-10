@@ -1,0 +1,104 @@
+<!DOCTYPE htmil>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Number 3</title>
+  <style>
+    #dataFromExternalLink {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+    }
+
+    #dataFromExternalLink a {
+      font-weight: normal;
+      color: blue;
+    }
+    #dataFromServer {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+    }
+
+    #dataFromServer a {
+      font-weight: normal;
+      color: blue;
+    }
+
+    .red {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="dataFromExternalLink">
+
+  </div>
+  <div id="dataFromServer">
+
+  </div>
+  <br>
+
+  <p class="red">
+    Noted : Using Vanilla Javascript Can't Get all Bytes From Images Because SVG Don't have header content-length
+  </p>
+  <script>
+    fetch("https://onfido.com/")
+      .then(function (response) {
+        switch (response.status) {
+          // status "OK"
+          case 200:
+            return response.text();
+          // status "Not Found"
+          case 404:
+            throw response;
+        }
+      })
+      .then(function (template) {
+        const doc = new DOMParser().parseFromString(template, "text/html");
+        const imgs = doc.querySelectorAll("img");
+
+        // array for dataImages
+        let dataImages = [];
+        //Get All Data Image URL And Exlude Base64 Image
+        for (var i = 0; i < imgs.length; i++) {
+          //Get Image Src Value
+          let data = imgs[i].getAttribute("src");
+          //Check Extensi Image
+          let checkImageExtention = data.match(/\.\w{3,4}($|\?)/g);
+          //Add To Array Data Image Have Extention
+          if (checkImageExtention != null) {
+            dataImages.push(data);
+          } else {
+          }
+        }
+
+        //Loop For Add Parse Url And Make It Valid URL
+        for (i = 0; i < dataImages.length; i++) {
+          let parser = document.createElement("a");
+          parser.href = dataImages[i];
+          let hostName = parser.hostname;
+          let pathName = parser.pathname;
+          let url = "";
+          if (hostName == "") {
+            let localPathName = "https://onfido.com" + pathName;
+            fetch(localPathName, { mode: "no-cors" }).then((response) =>
+              document.getElementById("dataFromServer").innerHTML += '<a href=' + localPathName + '>' + localPathName + '</a>' + '<br>' + 'Total Bytes = ' + response.headers.get("content-length"
+              ) + '<br>');
+          } else {
+            url = "https://" + hostName + pathName;
+            fetch(url, { mode: "cors" }).then((response) =>
+              document.getElementById("dataFromExternalLink").innerHTML += '<a href=' + url + '>' + url + '</a>' + '<br>' + 'Total Bytes = ' + response.headers.get("content-length"
+              ) + '<br>');
+          }
+        }
+      })
+      .catch(function (response) {
+        // "Not Found"
+        console.log(response.statusText);
+      });
+  </script>
+</body>
+
+</html>

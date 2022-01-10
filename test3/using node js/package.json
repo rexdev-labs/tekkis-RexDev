@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "got": "^10.4.0",
+    "puppeteer": "^13.0.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  },
+  "name": "test3",
+  "version": "1.0.0",
+  "main": "test3.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
